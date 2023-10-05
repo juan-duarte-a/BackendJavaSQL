@@ -78,3 +78,55 @@ WHERE p.codigo_fabricante = f.codigo AND f.nombre IN ('asus', 'hewlett-packard')
 SELECT p.nombre, p.precio, f.nombre FROM producto p, fabricante f 
 WHERE p.codigo_fabricante = f.codigo AND p.precio >= 180
 ORDER BY p.precio DESC, p.nombre;
+
+
+/* Consultas multitabla JOIN */
+
+-- Numeral 1
+SELECT f.*, p.* FROM fabricante f LEFT JOIN producto p 
+ON f.codigo = p.codigo_fabricante;
+
+-- Numeral 2 (Opción 1)
+SELECT f.* FROM fabricante f LEFT JOIN producto p 
+ON f.codigo = p.codigo_fabricante
+WHERE p.codigo IS NULL;
+
+-- Numeral 2 (Opción 2)
+SELECT f.* FROM fabricante f LEFT JOIN producto p 
+ON f.codigo = p.codigo_fabricante
+GROUP BY f.codigo HAVING COUNT(p.codigo) = 0;
+
+
+/* Subconsultas */
+
+-- Numeral 1
+
+SELECT * FROM producto WHERE codigo_fabricante = (
+	SELECT codigo FROM fabricante WHERE nombre = 'Lenovo');
+
+-- Numeral 2
+SELECT * FROM producto WHERE precio = (
+	SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (
+		SELECT codigo FROM fabricante WHERE nombre = 'Lenovo'));
+
+-- Numeral 3
+SELECT nombre FROM producto WHERE precio = (
+	SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (
+		SELECT codigo FROM fabricante WHERE nombre = 'Lenovo'));
+
+-- Numeral 4 (Opción 1)
+SELECT * FROM producto WHERE codigo_fabricante = (
+	SELECT codigo FROM fabricante WHERE nombre = 'Asus')
+AND precio > (
+	SELECT AVG(precio) FROM producto WHERE codigo_fabricante = (
+		SELECT codigo FROM fabricante WHERE nombre = 'Asus'));
+
+-- Numeral 4 (Opción 2)
+SET @codigo_asus = (SELECT codigo FROM fabricante WHERE nombre = 'Asus');
+
+SELECT * FROM producto WHERE codigo_fabricante = @codigo_asus AND precio > (
+	SELECT AVG(precio) FROM producto WHERE codigo_fabricante = @codigo_asus);
+
+/* Subconsultas con IN y NOT IN */
+
+-- Numeral 1
