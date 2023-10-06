@@ -127,6 +127,40 @@ SET @codigo_asus = (SELECT codigo FROM fabricante WHERE nombre = 'Asus');
 SELECT * FROM producto WHERE codigo_fabricante = @codigo_asus AND precio > (
 	SELECT AVG(precio) FROM producto WHERE codigo_fabricante = @codigo_asus);
 
+
 /* Subconsultas con IN y NOT IN */
 
 -- Numeral 1
+SELECT DISTINCT f.nombre FROM fabricante f, producto p WHERE f.codigo IN (
+	SELECT DISTINCT codigo_fabricante FROM producto); 
+
+-- Numeral 2
+SELECT DISTINCT f.nombre FROM fabricante f, producto p WHERE f.codigo NOT IN (
+	SELECT DISTINCT codigo_fabricante FROM producto);
+
+
+/* Subconsultas (En la cláusula HAVING) */
+
+-- Numeral 1 (Con subconsulta)
+SELECT f.nombre, COUNT(p.codigo_fabricante) cantidad 
+FROM fabricante f, producto p 
+WHERE f.codigo = p.codigo_fabricante 
+GROUP BY p.codigo_fabricante
+HAVING cantidad = (
+	SELECT COUNT(p.codigo_fabricante) 
+	FROM producto p GROUP BY p.codigo_fabricante 
+	HAVING p.codigo_fabricante = (
+		SELECT codigo FROM fabricante 
+		WHERE nombre = 'Lenovo')); 
+
+-- Numeral 1 (Sin subconsulta)
+SET @productos_lenovo = (SELECT COUNT(p.codigo_fabricante) 
+FROM producto p GROUP BY p.codigo_fabricante 
+HAVING p.codigo_fabricante = (SELECT codigo FROM fabricante WHERE nombre = 'Lenovo'));
+
+SELECT f.nombre, COUNT(p.codigo_fabricante) cantidad 
+FROM fabricante f, producto p 
+WHERE f.codigo = p.codigo_fabricante 
+GROUP BY p.codigo_fabricante
+HAVING cantidad = @productos_lenovo; 
+
