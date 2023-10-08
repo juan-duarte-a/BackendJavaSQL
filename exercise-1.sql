@@ -149,6 +149,12 @@ LEFT JOIN empleados e
 ON d.id_depto = e.id_depto
 WHERE e.id_depto IS NULL;
 
+-- Numeral 26 (Opción 3)
+SELECT id_depto, nombre_depto 
+FROM departamentos 
+WHERE id_depto NOT IN (
+	SELECT DISTINCT id_depto FROM empleados);
+
 -- Numeral 27 (28 en la guía)
 SELECT * 
 FROM empleados 

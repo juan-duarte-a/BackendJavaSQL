@@ -4,7 +4,9 @@ USE nba;
 SELECT Nombre FROM jugadores ORDER BY Nombre;
 
 -- Numeral 2
-SELECT Nombre FROM jugadores WHERE Posicion = 'C' AND Peso > 200 ORDER BY Nombre;
+SELECT Nombre FROM jugadores 
+WHERE Posicion = 'C' AND Peso > 200 
+ORDER BY Nombre;
 
 -- Numeral 3
 SELECT Nombre FROM equipos ORDER BY Nombre;
@@ -21,7 +23,9 @@ WHERE j.Nombre_equipo = e.Nombre
 ORDER BY e.Nombre;
 
 -- Numeral 7
-SELECT * FROM jugadores WHERE Nombre_equipo = 'Raptors' ORDER BY Nombre;
+SELECT * FROM jugadores 
+WHERE Nombre_equipo = 'Raptors' 
+ORDER BY Nombre;
 
 -- Numeral 8
 SELECT e.Puntos_por_partido, e.temporada  
@@ -41,7 +45,8 @@ WHERE e.jugador = j.codigo
 GROUP BY j.codigo;
 
 -- Numeral 11
-SELECT Nombre_equipo, COUNT(codigo) Jugadores FROM jugadores GROUP BY Nombre_equipo;
+SELECT Nombre_equipo, COUNT(codigo) Jugadores 
+FROM jugadores GROUP BY Nombre_equipo;
 
 -- Numeral 12
 SELECT j.Nombre, AVG(e.Puntos_por_partido) puntos
@@ -57,3 +62,25 @@ FROM jugadores j, equipos e
 WHERE j.Nombre_equipo = e.Nombre 
 AND j.Altura = (SELECT MAX(Altura) FROM jugadores);
 
+-- Numeral 14
+SELECT * FROM partidos 
+WHERE ABS(puntos_local - puntos_visitante) = (
+	SELECT MAX(ABS(puntos_local - puntos_visitante)) FROM partidos);
+
+-- Numeral 15
+SELECT
+	codigo,
+	equipo_local,
+	equipo_visitante,
+	puntos_local,
+	puntos_visitante,
+	CASE
+		WHEN puntos_local < puntos_visitante 
+		THEN equipo_visitante
+		ELSE
+			CASE
+				WHEN puntos_local > puntos_visitante
+				THEN equipo_local
+			END
+	END Ganador
+FROM partidos;
