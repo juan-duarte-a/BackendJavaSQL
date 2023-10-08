@@ -76,11 +76,8 @@ SELECT
 	puntos_visitante,
 	CASE
 		WHEN puntos_local < puntos_visitante 
-		THEN equipo_visitante
-		ELSE
-			CASE
-				WHEN puntos_local > puntos_visitante
-				THEN equipo_local
-			END
+			THEN equipo_visitante
+		WHEN puntos_local > puntos_visitante
+			THEN equipo_local
 	END Ganador
 FROM partidos;
