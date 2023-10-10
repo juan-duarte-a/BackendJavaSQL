@@ -109,10 +109,57 @@ FROM
 	movimiento m,
     pokemon_movimiento_forma pmf,
     forma_aprendizaje fa,
-    pokemon p
+    pokemon p,
+    MT
 WHERE m.id_movimiento = pmf.id_movimiento
 AND pmf.id_forma_aprendizaje = fa.id_forma_aprendizaje
 AND pmf.numero_pokedex = p.numero_pokedex
 AND p.nombre = 'Pikachu'
-AND fa.id_forma_aprendizaje IN (
-	SELECT id_forma_aprendizaje FROM MT);
+AND fa.id_forma_aprendizaje = MT.id_forma_aprendizaje;
+
+-- Numeral 17
+SELECT DISTINCT m.*, t.nombre tipo
+FROM 
+	pokemon p,
+    pokemon_movimiento_forma pmf,
+    movimiento m,
+    tipo t
+WHERE p.nombre = 'Pikachu'
+AND p.numero_pokedex = pmf.numero_pokedex
+AND pmf.id_movimiento = m.id_movimiento
+AND m.id_tipo = t.id_tipo
+AND t.nombre = 'Normal';
+
+-- Numeral 18
+SELECT m.*, mef.probabilidad
+FROM
+	movimiento m, 
+    movimiento_efecto_secundario mef, 
+    efecto_secundario es
+WHERE m.id_movimiento = mef.id_movimiento
+AND mef.id_efecto_secundario = es.id_efecto_secundario
+AND mef.probabilidad > 30;
+
+-- Numeral 19
+SELECT p.* 
+FROM
+	pokemon p,
+    pokemon_forma_evolucion pfe,
+    forma_evolucion fe,
+    piedra
+WHERE p.numero_pokedex = pfe.numero_pokedex
+AND pfe.id_forma_evolucion = fe.id_forma_evolucion
+AND fe.id_forma_evolucion = piedra.id_forma_evolucion;
+
+-- Numeral 20
+SELECT DISTINCT(p.numero_pokedex), p.nombre 
+FROM pokemon p, evoluciona_de e
+WHERE p.numero_pokedex NOT IN (
+	SELECT pokemon_origen FROM evoluciona_de);
+
+-- Numeral 21
+SELECT t.nombre tipo, COUNT(p.numero_pokedex) cantidad
+FROM tipo t, pokemon_tipo pt, pokemon p
+WHERE p.numero_pokedex = pt.numero_pokedex
+AND pt.id_tipo = t.id_tipo
+GROUP BY t.id_tipo;
